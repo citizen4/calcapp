@@ -124,6 +124,7 @@ public class CalculatorActivity extends Activity
 
       }
 
+
       private void execOpertation(final String operation)
       {
          displayValue = Integer.parseInt((String) display.getText());
