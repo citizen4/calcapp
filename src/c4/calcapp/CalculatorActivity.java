@@ -3,11 +3,15 @@ package c4.calcapp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class CalculatorActivity extends Activity
 {
@@ -15,9 +19,9 @@ public class CalculatorActivity extends Activity
    private BtnListener btnListener = new BtnListener();
    private TextView display;
    private StringBuilder displayStr = new StringBuilder("");
-   private Double result = 0.0;
+   //private Double result = 0.0;
    private int displayValue = 0;
-   private int resultValue = 0;
+   private long resultValue = 0;
    private String lastOperation = "";
 
    @Override
@@ -33,7 +37,7 @@ public class CalculatorActivity extends Activity
    {
       super.onSaveInstanceState(currentState);
       currentState.putString("display",(String)display.getText());
-      currentState.putInt("resultValue",resultValue);
+      currentState.putLong("resultValue", resultValue);
       currentState.putString("lastOperation",lastOperation);
    }
 
@@ -44,9 +48,13 @@ public class CalculatorActivity extends Activity
    }
 
 
-
    private void setup(final Bundle lastState)
    {
+      if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+         findViewById(R.id.spacer1).setLayoutParams(
+                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0));
+      }
+
       display = (TextView) findViewById(R.id.display);
 
       numButtons.put((Button) findViewById(R.id.btn0), 0);
@@ -96,36 +104,37 @@ public class CalculatorActivity extends Activity
          switch (v.getId()) {
             case R.id.btn_clear:
                displayStr.setLength(0);
-               displayValue = resultValue = 0;
+               displayValue = 0;
+               resultValue = 0L;
                display.setText("0");
                lastOperation = "ce";
                break;
 
             case R.id.btn_plus:
-               execOpertation("plus");
+               execOperation("plus");
                break;
 
             case R.id.btn_minus:
-               execOpertation("minus");
+               execOperation("minus");
                break;
 
             case R.id.btn_mul:
-               execOpertation("mul");
+               execOperation("mul");
                break;
 
             case R.id.btn_div:
-               execOpertation("div");
+               execOperation("div");
                break;
 
             case R.id.btn_dot:
-               execOpertation("=");
+               execOperation("=");
                break;
          }
 
       }
 
 
-      private void execOpertation(final String operation)
+      private void execOperation(final String operation)
       {
          displayValue = Integer.parseInt((String) display.getText());
 
