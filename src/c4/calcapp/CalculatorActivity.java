@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,7 @@ import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 public class CalculatorActivity extends Activity
 {
    private static final String LOG_TAG = "CalculatorActivity";
-   private Handler handler;
+   //private Handler handler;
    private Map<Button, Integer> numButtons = new HashMap<>();
    private BtnListener btnListener = new BtnListener();
    private TextView display;
@@ -43,7 +41,6 @@ public class CalculatorActivity extends Activity
    {
       super.onCreate(savedInstanceState);
       Log.d(LOG_TAG, "onCreate()");
-      handler = new Handler();
       setContentView(R.layout.main);
       setup(savedInstanceState);
    }
@@ -139,8 +136,7 @@ public class CalculatorActivity extends Activity
 
       display = (TextView) findViewById(R.id.display);
 
-      Log.d(LOG_TAG, "" + findViewById(R.id.btn0));
-      //numButtons.put((Button) findViewById(R.id.btn0), 0);
+      numButtons.put((Button) findViewById(R.id.btn0), 0);
       numButtons.put((Button) findViewById(R.id.btn1), 1);
       numButtons.put((Button) findViewById(R.id.btn2), 2);
       numButtons.put((Button) findViewById(R.id.btn3), 3);
@@ -224,16 +220,18 @@ public class CalculatorActivity extends Activity
    private class BtnListener implements View.OnClickListener
    {
       @Override
-      public void onClick(View v)
+      public void onClick(View view)
       {
-         if (numButtons.containsKey(v)) {
-            displayStr.append(numButtons.get(v));
+         Button btn = (Button) view;
+
+         if (numButtons.containsKey(btn)) {
+            displayStr.append(numButtons.get(btn));
             if (displayStr.length() < 9) {
                display.setText(displayStr);
             }
          }
 
-         switch (v.getId()) {
+         switch (btn.getId()) {
             case R.id.btn_clear:
                displayStr.setLength(0);
                displayValue = 0;
