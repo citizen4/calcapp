@@ -20,6 +20,7 @@
                 android:background="#000"
                 android:paddingLeft="10dp"
                 android:maxLines="1"
+                android:textColor="#2f0"
           />
    </LinearLayout>
 
@@ -55,6 +56,7 @@
                  android:id="@+id/btn7"
                  android:background="@drawable/white_push_button"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
 
          <Button android:layout_height="match_parent"
@@ -66,6 +68,7 @@
                  android:id="@+id/btn8"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
 
          <Button android:layout_height="match_parent"
@@ -77,6 +80,7 @@
                  android:id="@+id/btn9"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
 
          <Button android:layout_height="match_parent"
@@ -103,6 +107,7 @@
                  android:id="@+id/btn4"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
                 />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -113,6 +118,7 @@
                  android:id="@+id/btn5"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -123,6 +129,7 @@
                  android:id="@+id/btn6"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -148,6 +155,7 @@
                  android:id="@+id/btn1"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -158,6 +166,7 @@
                  android:id="@+id/btn2"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -168,6 +177,7 @@
                  android:id="@+id/btn3"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
@@ -184,6 +194,14 @@
       <TableRow android:layout_weight="1"
                 android:layout_height="0dp"
           >
+
+         <include layout="@layout/button"
+                  android:id="@+id/btn0"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+             />
+
+         <!--
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
                  android:layout_weight="1"
@@ -193,8 +211,9 @@
                  android:id="@+id/btn0"
                  android:background="@drawable/white_button_bg"
                  android:layout_margin="2dp"
+                 android:textColor="#222"
              />
-
+         -->
          <Button android:layout_height="match_parent"
                  android:layout_width="0dp"
                  android:layout_weight="1"

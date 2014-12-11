@@ -1,20 +1,33 @@
 package c4.calcapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class CalculatorActivity extends Activity
 {
+   private static final String LOG_TAG = "CalculatorActivity";
+   private Handler handler;
    private Map<Button, Integer> numButtons = new HashMap<>();
    private BtnListener btnListener = new BtnListener();
    private TextView display;
@@ -24,40 +37,110 @@ public class CalculatorActivity extends Activity
    private long resultValue = 0;
    private String lastOperation = "";
 
+
    @Override
    public void onCreate(Bundle savedInstanceState)
    {
       super.onCreate(savedInstanceState);
+      Log.d(LOG_TAG, "onCreate()");
+      handler = new Handler();
       setContentView(R.layout.main);
       setup(savedInstanceState);
+   }
+
+
+   @Override
+   protected void onResume()
+   {
+      Log.d(LOG_TAG, "onResume()");
+      super.onResume();
+   }
+
+   @Override
+   protected void onPause()
+   {
+      Log.d(LOG_TAG, "onPause()");
+      super.onPause();
    }
 
    @Override
    protected void onSaveInstanceState(Bundle currentState)
    {
+      Log.d(LOG_TAG, "onSaveInstanceState()");
       super.onSaveInstanceState(currentState);
-      currentState.putString("display",(String)display.getText());
+      currentState.putString("display", (String) display.getText());
       currentState.putLong("resultValue", resultValue);
-      currentState.putString("lastOperation",lastOperation);
+      currentState.putString("lastOperation", lastOperation);
    }
 
    @Override
-   public void onDestroy()
+   protected void onDestroy()
    {
+      Log.d(LOG_TAG, "onDestroy()");
       super.onDestroy();
    }
 
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu)
+   {
+      menu.add(Menu.NONE, 1, 1, R.string.item1);
+      menu.add(Menu.NONE, 2, 2, R.string.item2);
+      menu.add(Menu.NONE, 3, 3, R.string.item3);
+      menu.add(Menu.NONE, 4, 4, R.string.item4);
+
+      // Inflate the menu items for use in the action bar
+      /*
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.main, menu);
+      */
+      return super.onCreateOptionsMenu(menu);
+   }
+
+
+   @Override
+   public boolean onMenuItemSelected(int featureId, MenuItem item)
+   {
+      switch (item.getItemId()) {
+         case 1/*R.id.action_item1*/:
+            showToast(getString(R.string.item1), 5);
+            break;
+         case 2/*R.id.action_item2*/:
+            showToast(getString(R.string.item2), 5);
+            switchLanguage();
+            break;
+         case 3:
+            showToast(getString(R.string.item3), 5);
+            break;
+         case 4:
+            showToast(getString(R.string.item4), 5);
+            break;
+         default:
+            super.onMenuItemSelected(featureId, item);
+      }
+
+      return true;
+   }
 
    private void setup(final Bundle lastState)
    {
+      ActionBar actionBar = getActionBar();
+
+      if (actionBar != null) {
+         actionBar.setDisplayShowTitleEnabled(false);
+      }
+
       if (getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
          findViewById(R.id.spacer1).setLayoutParams(
                  new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0));
+         if (actionBar != null) {
+            actionBar.hide();
+         }
       }
 
       display = (TextView) findViewById(R.id.display);
 
-      numButtons.put((Button) findViewById(R.id.btn0), 0);
+      Log.d(LOG_TAG, "" + findViewById(R.id.btn0));
+      //numButtons.put((Button) findViewById(R.id.btn0), 0);
       numButtons.put((Button) findViewById(R.id.btn1), 1);
       numButtons.put((Button) findViewById(R.id.btn2), 2);
       numButtons.put((Button) findViewById(R.id.btn3), 3);
@@ -79,18 +162,67 @@ public class CalculatorActivity extends Activity
       findViewById(R.id.btn_div).setOnClickListener(btnListener);
       findViewById(R.id.btn_dot).setOnClickListener(btnListener);
 
-      if(lastState != null){
+
+      if (lastState != null) {
          displayStr.append(lastState.getString("display"));
          display.setText(displayStr);
-         resultValue = lastState.getInt("resultValue");
+         resultValue = lastState.getLong("resultValue");
          lastOperation = lastState.getString("lastOperation");
       }
 
    }
 
+   private void switchLanguage()
+   {
+      Configuration config = getResources().getConfiguration();
+
+      if (config.locale.equals(Locale.ENGLISH)) {
+         Log.d("", "switch to german");
+         config.locale = Locale.GERMAN;
+      } else {
+         Log.d("", "switch to english");
+         config.locale = Locale.ENGLISH;
+      }
+
+      getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+      Intent refresh = new Intent(this, CalculatorActivity.class);
+      startActivity(refresh);
+      finish();
+   }
+
+   private void showToast(final String toastMsg, final int secs)
+   {
+      final Context ctx = getApplicationContext();
+      final Toast toast = Toast.makeText(ctx, toastMsg, Toast.LENGTH_LONG);
+
+      new Thread(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            int s = secs;
+            try {
+               while (s-- > 0) {
+                  runOnUiThread(new Runnable()
+                  {
+                     @Override
+                     public void run()
+                     {
+                        toast.show();
+                     }
+                  });
+                  Thread.sleep(1000);
+               }
+            } catch (InterruptedException e) {
+               e.printStackTrace();
+            }
+            toast.cancel();
+         }
+      }).start();
+   }
+
    private class BtnListener implements View.OnClickListener
    {
-
       @Override
       public void onClick(View v)
       {
@@ -157,7 +289,7 @@ public class CalculatorActivity extends Activity
                   resultValue = displayValue;
                   break;
             }
-         }catch(ArithmeticException e){
+         } catch (ArithmeticException e) {
             resultValue = 0;
          }
 

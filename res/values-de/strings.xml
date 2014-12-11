@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="app_name">calcapp</string>
+   <string name="item1">Einstellungen</string>
+   <string name="item2">Sprache EN</string>
+   <string name="item3">Hilfe</string>
+   <string name="item4">Über</string>
+</resources>

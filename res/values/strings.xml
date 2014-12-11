@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <string name="app_name">calcapp</string>
+   <string name="item1">Preferences</string>
+   <string name="item2">Language DE</string>
+   <string name="item3">Help</string>
+   <string name="item4">About</string>
 </resources>
