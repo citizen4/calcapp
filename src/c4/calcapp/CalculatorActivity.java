@@ -4,7 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,15 +27,17 @@ import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 public class CalculatorActivity extends Activity
 {
    private static final String LOG_TAG = "CalculatorActivity";
+   private static final int NUM_DIGITS = 10;
    //private Handler handler;
    private Map<Button, Integer> numButtons = new HashMap<>();
    private BtnListener btnListener = new BtnListener();
    private TextView display;
    private StringBuilder displayStr = new StringBuilder("");
    //private Double result = 0.0;
-   private int displayValue = 0;
+   private long displayValue = 0;
    private long resultValue = 0;
    private String lastOperation = "";
+   private SharedPreferences prefs;
 
 
    @Override
@@ -41,6 +45,7 @@ public class CalculatorActivity extends Activity
    {
       super.onCreate(savedInstanceState);
       Log.d(LOG_TAG, "onCreate()");
+      prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
       setContentView(R.layout.main);
       setup(savedInstanceState);
    }
@@ -74,6 +79,9 @@ public class CalculatorActivity extends Activity
    protected void onDestroy()
    {
       Log.d(LOG_TAG, "onDestroy()");
+      SharedPreferences.Editor editor = prefs.edit();
+      editor.putString("display", (String) display.getText());
+      editor.apply();
       super.onDestroy();
    }
 
@@ -134,7 +142,10 @@ public class CalculatorActivity extends Activity
          }
       }
 
+      Typeface tf = Typeface.createFromAsset(getAssets(), "fonts/digital.ttf");
+
       display = (TextView) findViewById(R.id.display);
+      display.setTypeface(tf);
 
       numButtons.put((Button) findViewById(R.id.btn0), 0);
       numButtons.put((Button) findViewById(R.id.btn1), 1);
@@ -164,6 +175,10 @@ public class CalculatorActivity extends Activity
          display.setText(displayStr);
          resultValue = lastState.getLong("resultValue");
          lastOperation = lastState.getString("lastOperation");
+      } else {
+         if (prefs.contains("display")) {
+            display.setText(prefs.getString("display", "0"));
+         }
       }
 
    }
@@ -226,7 +241,7 @@ public class CalculatorActivity extends Activity
 
          if (numButtons.containsKey(btn)) {
             displayStr.append(numButtons.get(btn));
-            if (displayStr.length() < 9) {
+            if (displayStr.length() <= NUM_DIGITS) {
                display.setText(displayStr);
             }
          }
@@ -266,9 +281,10 @@ public class CalculatorActivity extends Activity
 
       private void execOperation(final String operation)
       {
-         displayValue = Integer.parseInt((String) display.getText());
 
          try {
+
+            displayValue = Long.parseLong((String) display.getText());
 
             switch (lastOperation) {
                case "plus":
@@ -292,8 +308,14 @@ public class CalculatorActivity extends Activity
          }
 
          displayStr.setLength(0);
-         display.setText(String.valueOf(resultValue));
-         lastOperation = operation;
+
+         if (resultValue > Integer.MAX_VALUE || resultValue < Integer.MIN_VALUE) {
+            display.setText(resultValue > Integer.MAX_VALUE ? "Inf" : "-Inf");
+            lastOperation = "";
+         } else {
+            display.setText(String.valueOf(resultValue));
+            lastOperation = operation;
+         }
       }
    }
 
